@@ -16,6 +16,8 @@ def get_args():
         "items", nargs="+", help="Brought Items"
     )
     parser.add_argument("-s", "--sorted", action="store_true", help="Sort input")
+    parser.add_argument("-noc", "--no-oxford-comma", action="store_true", help="Disable oxford comma")
+    parser.add_argument("-d", "--delimiter", default=",", help="Customize delimiter")
     return parser.parse_args()
 
 
@@ -27,9 +29,16 @@ def main():
     if len(items) > 1:
         if args.sorted:
             items.sort()
-        items[-1] = "and " + items[-1]
+
+        if (args.no_oxford_comma):
+            items[-2] = items[-2] + " and " + items[-1]
+            items.pop()
+        else:
+            items[-1] = "and " + items[-1]
+
         if len(items) > 2:
-            output = ", ".join(items)
+            delimiter = args.delimiter + " " 
+            output = delimiter.join(items)
         else:
             output = " ".join(items)
 
