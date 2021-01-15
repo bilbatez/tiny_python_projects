@@ -30,6 +30,13 @@ def get_args():
         choices=list("aeiou"),
         help="The vowel(s) allowed",
     )
+    parser.add_argument(
+        "-nr",
+        "--not-redundant",
+        action="store_true",
+        default=False,
+        help="Disallowed vowels redundancy",
+    )
     return parser.parse_args()
 
 
@@ -44,7 +51,14 @@ def main():
             vowel_substitute = (
                 args.vowel.upper() if char.isupper() else args.vowel.lower()
             )
-            n_line += vowel_substitute if char in "aeiouAEIOU" else char
+            n_line += (
+                ""
+                if args.not_redundant and n_line and n_line[-1] == vowel_substitute
+                else vowel_substitute
+                if char in "aeiouAEIOU"
+                else char
+            )
+
         print(n_line)
 
 
