@@ -10,14 +10,12 @@ from subprocess import getstatusoutput, getoutput
 prg = './abuse.py'
 
 
-# --------------------------------------------------
 def test_exists():
     """exists"""
 
     assert os.path.isfile(prg)
 
 
-# --------------------------------------------------
 def test_usage():
     """usage"""
 
@@ -27,7 +25,6 @@ def test_usage():
         assert re.match("usage", out, re.IGNORECASE)
 
 
-# --------------------------------------------------
 def test_bad_adjective_str():
     """bad_adjectives"""
 
@@ -37,7 +34,6 @@ def test_bad_adjective_str():
     assert re.search(f"invalid int value: '{bad}'", out)
 
 
-# --------------------------------------------------
 def test_bad_adjective_num():
     """bad_adjectives"""
 
@@ -48,7 +44,6 @@ def test_bad_adjective_num():
     assert re.search(f'--adjectives "{n}" must be > 0', out)
 
 
-# --------------------------------------------------
 def test_bad_number_str():
     """bad_number"""
 
@@ -58,7 +53,6 @@ def test_bad_number_str():
     assert re.search(f"invalid int value: '{bad}'", out)
 
 
-# --------------------------------------------------
 def test_bad_number_int():
     """bad_number"""
 
@@ -68,7 +62,6 @@ def test_bad_number_int():
     assert re.search(f'--number "{n}" must be > 0', out)
 
 
-# --------------------------------------------------
 def test_bad_seed():
     """bad seed"""
 
@@ -78,7 +71,6 @@ def test_bad_seed():
     assert re.search(f"invalid int value: '{bad}'", out)
 
 
-# --------------------------------------------------
 def test_01():
     """test"""
 
@@ -86,7 +78,6 @@ def test_01():
     assert out.strip() == 'You filthsome, cullionly fiend!'
 
 
-# --------------------------------------------------
 def test_02():
     """test"""
 
@@ -99,7 +90,6 @@ You insatiate, heedless worm!
     assert out.strip() == expected
 
 
-# --------------------------------------------------
 def test_03():
     """test"""
 
@@ -114,7 +104,6 @@ You cullionly worm!
     assert out.strip() == expected
 
 
-# --------------------------------------------------
 def test_04():
     """test"""
 
@@ -125,8 +114,48 @@ You filthy, detestable, cullionly, base lunatic!
 """.strip()
     assert out.strip() == expected
 
+def test_file_01():
+    """ test """
+    for flag in ['-af', '--adjectives-file']:
+        out = getoutput(f'{prg} --seed 1 --number 2 --adjectives 3 {flag} adjectives.txt')
+        expected = """
+You arrogant, cruel, pompous boy!
+You self-centered, pompous, arrogant liar!
+""".strip()
+        assert out.strip() == expected
 
-# --------------------------------------------------
+
+def test_file_02():
+    """ test """
+    for flag in ['-nf', '--nouns-file']:
+        out = getoutput(f'{prg} --seed 1 --number 2 --adjectives 3 {flag} nouns.txt')
+        expected = """
+You filthsome, cullionly, insatiate idiot!
+You thin-faced, scurvy, sodden-witted dingbat!
+""".strip()
+        assert out.strip() == expected
+
+
+def test_file_03():
+    """ test """
+    out = getoutput(f'{prg} --seed 1 --number 2 --adjectives 3 -af adjectives.txt -nf nouns.txt')
+    expected = """
+You arrogant, cruel, pompous idiot!
+You self-centered, pompous, arrogant dingbat!
+""".strip()
+    assert out.strip() == expected
+
+
+def test_file_04():
+    """ test """
+    out = getoutput(f'{prg} --seed 1 --number 2 --adjectives 3 --adjectives-file adjectives.txt --nouns-file nouns.txt')
+    expected = """
+You arrogant, cruel, pompous idiot!
+You self-centered, pompous, arrogant dingbat!
+""".strip()
+    assert out.strip() == expected
+
+
 def random_string():
     """generate a random filename"""
 
