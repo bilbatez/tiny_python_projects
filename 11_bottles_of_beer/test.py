@@ -64,7 +64,7 @@ def test_one():
 
     expected = ('1 bottle of beer on the wall,\n'
                 '1 bottle of beer,\n'
-                'Take one down, pass it around,\n'
+                'Take 1 down, pass it around,\n'
                 'No more bottles of beer on the wall!')
 
     rv, out = getstatusoutput(f'{prg} --num 1')
@@ -78,14 +78,60 @@ def test_two():
 
     expected = ('2 bottles of beer on the wall,\n'
                 '2 bottles of beer,\n'
-                'Take one down, pass it around,\n'
+                'Take 1 down, pass it around,\n'
                 '1 bottle of beer on the wall!\n\n'
                 '1 bottle of beer on the wall,\n'
                 '1 bottle of beer,\n'
-                'Take one down, pass it around,\n'
+                'Take 1 down, pass it around,\n'
                 'No more bottles of beer on the wall!')
 
     rv, out = getstatusoutput(f'{prg} -n 2')
+    assert rv == 0
+    assert out == expected
+
+
+# --------------------------------------------------
+def test_custom_step():
+    expected = ('3 bottles of beer on the wall,\n'
+                '3 bottles of beer,\n'
+                'Take 2 down, pass it around,\n'
+                '1 bottle of beer on the wall!\n\n'
+                '1 bottle of beer on the wall,\n'
+                '1 bottle of beer,\n'
+                'Take 2 down, pass it around,\n'
+                'No more bottles of beer on the wall!')
+    for flag in ["-s", "--step"]:
+        rv, out = getstatusoutput(f'{prg} -n 3 {flag} 2')
+        assert rv == 0
+        assert out == expected
+
+
+# --------------------------------------------------
+def test_reverse():
+    expected = ('1 bottle of beer on the wall,\n'
+                '1 bottle of beer,\n'
+                'Take 1 down, pass it around,\n'
+                '2 bottles of beer on the wall!\n\n'
+                '2 bottles of beer on the wall,\n'
+                '2 bottles of beer,\n'
+                'Take 1 down, pass it around,\n'
+                '3 bottles of beer on the wall!')
+    for flag in ["-r", "--reverse"]:
+        rv, out = getstatusoutput(f'{prg} -n 2 {flag}')
+        assert rv == 0
+        assert out == expected
+
+# --------------------------------------------------
+def test_reverse_custom_step():
+    expected = ('1 bottle of beer on the wall,\n'
+                '1 bottle of beer,\n'
+                'Take 2 down, pass it around,\n'
+                '3 bottles of beer on the wall!\n\n'
+                '3 bottles of beer on the wall,\n'
+                '3 bottles of beer,\n'
+                'Take 2 down, pass it around,\n'
+                '5 bottles of beer on the wall!')
+    rv, out = getstatusoutput(f'{prg} -n 3 --step 2 --reverse')
     assert rv == 0
     assert out == expected
 
