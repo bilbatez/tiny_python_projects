@@ -3,7 +3,8 @@
 
 import os
 import random
-from subprocess import getoutput
+import string
+from subprocess import getoutput, getstatusoutput
 
 prg = './rhymer.py'
 
@@ -72,3 +73,30 @@ def test_no_vowels():
     bad = ''.join(random.sample(consonants, k=random.randint(4, 10)))
     out = getoutput(f'{prg} {bad}')
     assert out == f'Cannot rhyme "{bad}"'
+
+
+# --------------------------------------------------
+def test_output_file():
+    """output file"""
+    """leading consonant"""
+
+    for flag in ['-o', '--output']:
+        try:
+            random_file = random_string()
+            rv, out = getstatusoutput(f'{prg} take {flag} {random_file}')
+            res = open(random_file).read().strip().split('\n')
+            assert rv == 0
+            assert out == ''
+            assert res[0] == 'bake'
+            assert res[-1] == 'zake'
+        finally:
+            if os.path.isfile(random_file):
+                os.remove(random_file)
+        
+
+
+# --------------------------------------------------
+def random_string():
+    """generate a random filename"""
+
+    return "".join(random.choices(string.ascii_lowercase + string.digits, k=5))
